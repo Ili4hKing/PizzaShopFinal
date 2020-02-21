@@ -12,15 +12,16 @@ using System.Data.SqlClient;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Text.RegularExpressions;
 
 namespace PizzaShopFinal
 {
 
-    
 
-    
 
-  
+
+
+
 
     public partial class Form2 : Form
     {
@@ -73,30 +74,33 @@ namespace PizzaShopFinal
             using (PizzaShopEntities db = new PizzaShopEntities())
             {
                 var MenuPizzas = db.MenuPizza;
-                //var SizePizzas = db.SizePizza;
-                //var TypeDoughPizzas = db.typeDoughPizza;
-                
+                var SizePizzas = db.SizePizza;
+                var TypeDoughPizzas = db.typeDoughPizza;
+
                 foreach (MenuPizza pl in MenuPizzas)
                 {
 
-                    this.comboBox1.Items.Add(pl.Pizza);
+                    this.comboBox1.Items.Add(pl.Pizza + "  " + pl.Cost);
+
                     //this.comboBox4.Items.Add(pl.Cost)
 
                 }
-                //foreach (SizePizza pl in SizePizzas)
-                //{
 
-                //    this.comboBox2.Items.Add(pl.Size);
 
-                    
+                foreach (SizePizza tl in SizePizzas)
+                {
 
-                //}
-                //foreach (typeDoughPizza pl in TypeDoughPizzas)
-                //{
+                    this.comboBox2.Items.Add(tl.Size);
 
-                //    this.comboBox3.Items.Add(pl.Dough);
-                    
-                //}
+
+
+                }
+                foreach (typeDoughPizza rl in TypeDoughPizzas)
+                {
+
+                    this.comboBox3.Items.Add(rl.Dough);
+
+                }
 
 
             }
@@ -104,24 +108,45 @@ namespace PizzaShopFinal
 
         private void Form2_Load(object sender, EventArgs e)
         {
-           
+
 
         }
 
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
+            using (PizzaShopEntities db = new PizzaShopEntities())
+            {
+                var MenuPizzas = db.MenuPizza;
+                foreach (MenuPizza pl in MenuPizzas)
+                {
+                    //int  index = comboBox1.SelectedIndex + 1; 
+
+                    //    label5.Text = pl.Cost;
+
+
+                }
+                //var MenuPizzass = db.MenuPizza;
+                //foreach (MenuPizza pl in MenuPizzass)
+                //{
+                //    var id = comboBox1.SelectedIndex + 1 == pl.id;
+                //    int r = Convert.ToInt32(pl.Cost);
+                //    int t = pl.id;
+                //    if (r == t )
+                //    {
+                //        label5.Text = pl.Cost;
+                //    }
+                //}
+
+                //    customers.FirstOrDefault().CustomerName = "Нузо";
+
+            }
 
         }
 
         private void Button1_Click(object sender, EventArgs e)
         {
             label5.Text = comboBox1.Text;
-            //SqlConnection connection = new SqlConnection(@"Data Source = DESKTOP-7M3OBV0\MUTSY; Initial catalog = PizzaShop; Integrated Security = SSPI");
-            //connection.Open();
-            //SqlCommand SqlReg = new SqlCommand("insert into dbo.ShoppingBasket ( Pizza, Size, Dough, Cost) values " + "("  + comboBox1.Text + "," + Convert.ToInt32(comboBox2.Text) + "," + comboBox3.Text + "," + comboBox4.Text + ")", connection);
-            //SqlDataReader SqlReader = null;
-            //SqlReader = SqlReg.ExecuteReader();
+
 
             using (IDbConnection connection = new SqlConnection())
             {
@@ -129,13 +154,13 @@ namespace PizzaShopFinal
             using (PizzaShopEntities db = new PizzaShopEntities())
             {
                 var ShoppingBaskets = db.ShoppingBasket;
-                foreach(ShoppingBasket pl in ShoppingBaskets)
+                foreach (ShoppingBasket pl in ShoppingBaskets)
                 {
-                    
+
                     comboBox1.Text = pl.Pizza;
                     comboBox2.Text = pl.Size;
                     comboBox3.Text = pl.Dough;
-                    comboBox4.Text = pl.Cost;
+                    db.SaveChanges();
 
                 }
 
@@ -146,6 +171,55 @@ namespace PizzaShopFinal
 
             }
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (PizzaShopEntities db = new PizzaShopEntities())
+            {
+
+                var MenuPizzas = db.MenuPizza;
+                foreach (MenuPizza pl in MenuPizzas)
+                {
+                    int id = comboBox1.SelectedIndex + 1;
+                    //    int r = Convert.ToInt32(pl.Cost);
+                    //    int t = pl.id;
+                    //    if (r == t)
+                    //    {
+                    //        label5.Text = pl.Cost;
+                    //    }
+                    int co = Convert.ToInt32(pl.id);
+
+                    IEnumerable<int> scoreQuery =
+            from MenuPizza in MenuPizzas
+            where MenuPizza.id == id
+            select pl.id;
+
+
+                    // Execute the query.
+                    foreach (int i in scoreQuery)
+                    {
+                        if (i == id)
+                        {
+                            label5.Text = pl.Cost;
+
+
+                            //label5.Text = Convert.ToString(i);
+                        }
+
+
+                    }
+                }
+
+                //    string tem;
+                //tem = comboBox1.Text;
+                //string cleanString = Regex.Replace(tem, @"[^0-9]", "");
+
+
+                ////Convert.ToInt32(cleanString);
+                //int c = Convert.ToInt32(cleanString) + 100;
+                //label5.Text = Convert.ToString(c);
+            }
         }
     }
 }
